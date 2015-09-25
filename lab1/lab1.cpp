@@ -63,8 +63,9 @@ struct Particle {
 	Vec velocity;
 };
 
+#define NUM_BOXES 5
 struct Game {
-	Shape box[5];
+	Shape box[NUM_BOXES];
 	Particle particle[MAX_PARTICLES];
 	int n;
 	int lastMousex, lastMousey;
@@ -93,13 +94,31 @@ int main(void)
 	//declare a box shape
 	game.box[0].width = 100;
 	game.box[0].height = 10;
-	game.box[0].center.x = 120 + 5*65;
-	game.box[0].center.y = 500 - 5*60;
+	game.box[0].center.x = 445;
+	game.box[0].center.y = 500 - 325;
 	
 	game.box[1].width = 100;
 	game.box[1].height = 10;
 	game.box[1].center.x = 120 + 5*65 + 50;
 	game.box[1].center.y = 500 - 5*60 - 30;
+	
+	game.box[2].width = 100;
+	game.box[2].height = 10;
+	game.box[2].center.x = 120 + 5*65 + 100;
+	game.box[2].center.y = 500 - 5*60 - 60;
+	
+	game.box[3].width = 100;
+	game.box[3].height = 10;
+	game.box[3].center.x = 120 + 5*65 + 150;
+	game.box[3].center.y = 500 - 5*60 - 90;
+	
+	game.box[4].width = 100;
+	game.box[4].height = 10;
+	game.box[4].center.x = 120 + 5*65 + 200;
+	game.box[4].center.y = 500 - 5*60 -120;
+	
+	
+	
 
 	//start animation
 	while(!done) {
@@ -259,14 +278,14 @@ void movement(Game *game)
 
 
 	//check for collision with shapes...
-    for(int j = 0; j < 2; j++){
+    for(int j = 0; j < NUM_BOXES; j++){
       Shape *s = &game->box[j];
       if(p->s.center.y < s->center.y + s->height &&
 			p->s.center.y > s->center.y - s->height &&
 			p->s.center.x >= s->center.x - s->width &&
             p->s.center.x <= s->center.x + s->width){
-        p->velocity.y *= -1.25;
-        p->s.center.y *= s->center.y + s->height + 0.1;
+        p->velocity.y *= -0.55;
+        //p->s.center.y *= s->center.y + s->height + 0.1;
       }
 
 
@@ -297,8 +316,8 @@ void render(Game *game)
 	glClear(GL_COLOR_BUFFER_BIT);
 	//Draw shapes...
 
-	//draw box
-	for(int j = 0; j < 2; j++){
+	//draw boxes here
+	for(int j = 0; j < NUM_BOXES; j++){
 	Shape *s;
 	glColor3ub(90,140,90);
 	s = &game->box[j];
