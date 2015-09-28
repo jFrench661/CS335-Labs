@@ -389,13 +389,13 @@ void render(Game *game)
 
 	Rect rect4;
     rect4.bot=WINDOW_HEIGHT-295;
-    rect4.left=130 + 240;
+    rect4.left=130 + 210;
     rect4.center=0;
     ggprint12(&rect4, 36, 0x00ffffff,"Coding");
 
 	Rect rect5;
     rect5.bot=WINDOW_HEIGHT-325;
-    rect5.left=130 + 360;
+    rect5.left=130 + 320;
     rect5.center=0;
     ggprint12(&rect5, 36, 0x00ffffff,"Testing");
 
