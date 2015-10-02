@@ -128,8 +128,8 @@ int main(void)
     game.box[4].center.x = xOrigin + 400;
     game.box[4].center.y = yOrigin - 120;
     
-    game.circle.center.x = 400;
-    game.circle.center.y = 100;
+    game.circle.center.x = 750;
+    game.circle.center.y = -20;
     game.circle.radius = 100;
 
 	
@@ -302,7 +302,27 @@ void movement(Game *game)
             p->s.center.x >= s->center.x - s->width &&
             p->s.center.x <= s->center.x + s->width){
         p->velocity.y *= -0.4;
+	  
 
+      }
+      
+      //check ricle collision
+      float d0, d1, dist;
+      d0 = p->s.center.x - game->circle.center.x;
+      d1 = p->s.center.y - game->circle.center.y;
+      dist = sqrt(d0*d0 + d1*d1);
+      if(dist <= game->circle.radius){
+	
+	//float v[2];
+	d0 /= dist;
+	d1 /= dist;
+	d0 *= game->circle.radius * 1.01;
+	d0 *= game->circle.radius * 1.01;
+	p->s.center.x = game->circle.center.x + d0;
+	p->s.center.y = game->circle.center.y + d1;
+	p->velocity.x += d0 * 0.02;
+	p->velocity.y += d1 * 0.02;
+	
       }
 
 
@@ -421,7 +441,7 @@ void render(Game *game)
     
     
 
-	Rect rect2;
+    Rect rect2;
     rect2.bot=WINDOW_HEIGHT-235;
     rect2.left=130;
     rect2.center=0;
