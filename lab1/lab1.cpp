@@ -71,6 +71,7 @@ struct Particle {
 #define NUM_BOXES 5
 struct Game {
     Shape box[NUM_BOXES];
+    Shape circle; // new from class
     Particle particle[MAX_PARTICLES];
     int n;
     int lastMousex, lastMousey;
@@ -126,6 +127,10 @@ int main(void)
     game.box[4].height = height;
     game.box[4].center.x = xOrigin + 400;
     game.box[4].center.y = yOrigin - 120;
+    
+    game.circle.center.x = 400;
+    game.circle.center.y = 100;
+    game.circle.radius = 100;
 
 	
 
@@ -328,8 +333,46 @@ void render(Game *game)
     float w, h;
     glClear(GL_COLOR_BUFFER_BIT);
     //Draw shapes...
+    
+    //new from class
+    static int firsttime = 1;
+    static int verts[60][2];
+    static int n = 60;
+    
+    glColor3ub(200, 3,3);
+    if(firsttime){
+      float angle = 0;
+      float inc = (3.14459 * 2.0) / (float)n;
+      for(int i = 0; i < n; i++){
+	verts[i][0] = cos(angle) * game->circle.radius + game->circle.center.x;
+	verts[i][1] = sin(angle) * game->circle.radius + game->circle.center.y;
+	angle += inc;
+	
+	
+      }
+      
+	
+	firsttime = 0;
+      }
+      
+     
+	glPushMatrix();
+        glBegin(GL_TRIANGLE_FAN);
+        //glVertex2i(-w,-h);
+	for(int i = 0; i < n; i++){
+	  glVertex2i(verts[i][0],  verts[i][1]);
+	
+        
+      
+    }
+    
+	glEnd();
+        glPopMatrix();
+	
+	//end new from class
+    
 
-	Rect rect;
+    Rect rect;
     rect.bot=WINDOW_HEIGHT-30;
     rect.left=0;
     rect.center=0;
@@ -374,6 +417,9 @@ void render(Game *game)
         glEnd();
         glPopMatrix();
     }
+    
+    
+    
 
 	Rect rect2;
     rect2.bot=WINDOW_HEIGHT-235;
@@ -404,6 +450,8 @@ void render(Game *game)
     rect6.left=130 + 400;
     rect6.center=0;
     ggprint12(&rect6, 36, 0x00ffffff,"Maintenance");
+    
+    
 
 
 }
