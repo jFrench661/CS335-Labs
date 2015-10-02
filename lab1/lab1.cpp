@@ -40,8 +40,8 @@ extern "C" {
     #include "fonts.h"
 }
 
-#define WINDOW_WIDTH  800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH  500
+#define WINDOW_HEIGHT 360
 
 #define MAX_PARTICLES 40000
 #define GRAVITY 0.1
@@ -71,7 +71,7 @@ struct Particle {
 #define NUM_BOXES 5
 struct Game {
     Shape box[NUM_BOXES];
-    Shape circle; // new from class
+ 	Shape circle; // new from class
     Particle particle[MAX_PARTICLES];
     int n;
     int lastMousex, lastMousey;
@@ -97,8 +97,8 @@ int main(void)
     Game game;
     game.n=0;
 
-    int xOrigin = 5*35;
-    int yOrigin = 500 - 5*25;
+    int xOrigin = 100;
+    int yOrigin = 250;
     int width = 80;
     int height = 10;
 
@@ -110,25 +110,25 @@ int main(void)
 
     game.box[1].width = width;
     game.box[1].height = height;
-    game.box[1].center.x = xOrigin + 100;
+    game.box[1].center.x = xOrigin + 50;
     game.box[1].center.y = yOrigin - 30;
 
     game.box[2].width = width;
     game.box[2].height = height;
-    game.box[2].center.x = xOrigin + 200;
+    game.box[2].center.x = xOrigin + 100;
     game.box[2].center.y = yOrigin - 60;
 
     game.box[3].width = width;
     game.box[3].height = height;
-    game.box[3].center.x = xOrigin + 300;
+    game.box[3].center.x = xOrigin + 150;
     game.box[3].center.y = yOrigin - 90;
 
     game.box[4].width = width;
     game.box[4].height = height;
-    game.box[4].center.x = xOrigin + 400;
+    game.box[4].center.x = xOrigin + 200;
     game.box[4].center.y = yOrigin - 120;
-    
-    game.circle.center.x = 750;
+
+	game.circle.center.x = 400;
     game.circle.center.y = -20;
     game.circle.radius = 100;
 
@@ -234,9 +234,9 @@ void check_mouse(XEvent *e, Game *game)
     if (e->type == ButtonPress) {
         if (e->xbutton.button==1) {
             //Left button was pressed
-            int y = WINDOW_HEIGHT - e->xbutton.y;
+            //int y = WINDOW_HEIGHT - e->xbutton.y;
             for (int i = 0; i <10; i++)
-            makeParticle(game, e->xbutton.x, y);
+            	//makeParticle(game, e->xbutton.x, y);
             return;
         }
         if (e->xbutton.button==3) {
@@ -250,7 +250,7 @@ void check_mouse(XEvent *e, Game *game)
         savey = e->xbutton.y;
         int y = WINDOW_HEIGHT - e->xbutton.y;
         for (int i = 0; i <10; i++){
-            makeParticle(game, e->xbutton.x, y);
+            //makeParticle(game, e->xbutton.x, y);
         }
 
         //for (++n < 10)
@@ -270,6 +270,12 @@ int check_keys(XEvent *e, Game *game)
             return 1;
         }
         //You may check other keys here.
+		int key2 = XLookupKeysym(&e->xkey, 1);
+		if(key2 == XK_B){
+			int x = game->lastMousex;
+			int y = game->lastMousey;
+			makeParticle(game, x, y);
+		}
 
     }
     return 0;
@@ -302,29 +308,21 @@ void movement(Game *game)
             p->s.center.x >= s->center.x - s->width &&
             p->s.center.x <= s->center.x + s->width){
         p->velocity.y *= -0.4;
-	  
 
       }
-      
-      //check ricle collision
-      float d0, d1, dist;
-      d0 = p->s.center.x - game->circle.center.x;
-      d1 = p->s.center.y - game->circle.center.y;
-      dist = sqrt(d0*d0 + d1*d1);
-      if(dist <= game->circle.radius){
-	
-	//float v[2];
-	d0 /= dist;
-	d1 /= dist;
-	d0 *= game->circle.radius * 1.01;
-	d0 *= game->circle.radius * 1.01;
-	p->s.center.x = game->circle.center.x + d0;
-	p->s.center.y = game->circle.center.y + d1;
-	p->velocity.x += d0 * 0.02;
-	p->velocity.y += d1 * 0.02;
-	
-      }
 
+
+	 //check circle collision
+      float d0,d1,dist;
+	d0 = p->s.center.x - game->circle.center.x;
+	d1 = p->s.center.y - game->circle.center.y;
+	dist = sqrt(d0*d0 + d1*d1);
+	if (dist < game->circle.radius) {
+	    p->s.center.x = game->circle.center.x + (game->circle.radius * d0/dist);
+	    p->s.center.y = game->circle.center.y + (game->circle.radius * d1/dist);
+	    p->velocity.x += d0/dist;
+	    p->velocity.y += d1/dist;
+	}
 
 
 
@@ -353,20 +351,19 @@ void render(Game *game)
     float w, h;
     glClear(GL_COLOR_BUFFER_BIT);
     //Draw shapes...
-    
-    //new from class
-    static int firsttime = 1;
+
+	 static int firsttime = 1;
     static int verts[60][2];
     static int n = 60;
     
-    glColor3ub(200, 3,3);
+    glColor3ub(50, 150,50);
     if(firsttime){
       float angle = 0;
       float inc = (3.14459 * 2.0) / (float)n;
       for(int i = 0; i < n; i++){
-	verts[i][0] = cos(angle) * game->circle.radius + game->circle.center.x;
-	verts[i][1] = sin(angle) * game->circle.radius + game->circle.center.y;
-	angle += inc;
+		verts[i][0] = cos(angle) * game->circle.radius + game->circle.center.x;
+		verts[i][1] = sin(angle) * game->circle.radius + game->circle.center.y;
+		angle += inc;
 	
 	
       }
@@ -378,7 +375,6 @@ void render(Game *game)
      
 	glPushMatrix();
         glBegin(GL_TRIANGLE_FAN);
-        //glVertex2i(-w,-h);
 	for(int i = 0; i < n; i++){
 	  glVertex2i(verts[i][0],  verts[i][1]);
 	
@@ -388,15 +384,16 @@ void render(Game *game)
     
 	glEnd();
         glPopMatrix();
-	
-	//end new from class
-    
 
-    Rect rect;
+	Rect rect;
     rect.bot=WINDOW_HEIGHT-30;
     rect.left=0;
     rect.center=0;
     ggprint16(&rect, 36, 0x00ffffff,"Waterfall Model");
+
+	
+
+	
 
 	
 
@@ -405,7 +402,7 @@ void render(Game *game)
     //draw boxes here
     for(int j = 0; j < NUM_BOXES; j++){
         Shape *s;
-        glColor3ub(255,0,5);
+        glColor3ub(50,50,50);
         s = &game->box[j];
         glPushMatrix();
         glTranslatef(s->center.x, s->center.y, s->center.z);
@@ -422,10 +419,18 @@ void render(Game *game)
 
 	
 
+
     //draw all particles here
     for(int i=0; i < game->n; i++){
+
+		int red = rand() % 20;
+		int green = rand() % 100;
+		int blue = rand() % 255;
+
         glPushMatrix();
-        glColor3ub(32,178, 170);
+
+        glColor3ub(red,green, blue);
+
         Vec *c = &game->particle[i].s.center;
         w = 2;
         h = 2;
@@ -437,41 +442,40 @@ void render(Game *game)
         glEnd();
         glPopMatrix();
     }
-    
-    
-    
 
-    Rect rect2;
-    rect2.bot=WINDOW_HEIGHT-235;
-    rect2.left=130;
-    rect2.center=0;
+	int bot = 240;
+	int left = 55;
+	int center = 0;
+
+	Rect rect2;
+    rect2.bot=bot;
+    rect2.left=left;
+    rect2.center=center;
     ggprint12(&rect2, 36, 0x00ffffff,"Requirements");
 
 	Rect rect3;
-    rect3.bot=WINDOW_HEIGHT-265;
-    rect3.left=130 + 120;
-    rect3.center=0;
+    rect3.bot=bot-30;
+    rect3.left=left+75;
+    rect3.center=center;
     ggprint12(&rect3, 36, 0x00ffffff,"Design");
 
 	Rect rect4;
-    rect4.bot=WINDOW_HEIGHT-295;
-    rect4.left=130 + 210;
+    rect4.bot=bot - 60;
+    rect4.left= left + 130;
     rect4.center=0;
     ggprint12(&rect4, 36, 0x00ffffff,"Coding");
 
 	Rect rect5;
-    rect5.bot=WINDOW_HEIGHT-325;
-    rect5.left=130 + 320;
+    rect5.bot= bot -90;
+    rect5.left= left + 180;
     rect5.center=0;
     ggprint12(&rect5, 36, 0x00ffffff,"Testing");
 
 	Rect rect6;
-    rect6.bot=WINDOW_HEIGHT-355;
-    rect6.left=130 + 400;
+    rect6.bot= bot - 120;
+    rect6.left= left + 210;
     rect6.center=0;
     ggprint12(&rect6, 36, 0x00ffffff,"Maintenance");
-    
-    
 
 
 }
